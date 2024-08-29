@@ -1,22 +1,32 @@
-import express, { json } from 'express';
+import express, { json } from "express";
 import dbconnect from "../db/config.js";
+import { postCell, getCell } from "../controllers/parking.controller.js";
+import cellRouter from "../routes/cell_route.js";
 
 class Server {
-    constructor() {
-        this.app = express();
-        this.listen();
-        this.dbconnection();
-    };
+  constructor() {
+    this.app = express();
+    this.pathCell = "/cells";
+    this.listen();
+    this.dbconnection();
+    this.route();
+  }
 
-    listen() {
-        this.app.listen(process.env.PORT, () => {
-            console.log('Server is running');
-        });
-    };
+  route() {
+    this.app.use(json());
+    this.app.get(this.pathCell, getCell);
+    this.app.post(this.pathCell, postCell);
+  };
 
-    async dbconnection() {
-        await dbconnect();
-    };
-};
+  listen() {
+    this.app.listen(process.env.PORT, () => {
+      console.log("Server is running");
+    });
+  };
+
+  async dbconnection() {
+    await dbconnect();
+  };
+}
 
 export default Server;
