@@ -119,24 +119,6 @@ export async function payment(req, res) {
   }
 }
 
-
-// // GET --> Calcula el valor a pagar
-// export async function payment(req, res) {
-//   try {
-//     const cell = await Cells.findById(req.params.id);
-//     if (!cell || !cell.entry_date) {
-//       return res.status(400).json({ message: "Departure date needed" });
-//     }
-//     const entryDate = new Date(cell.entry_date);
-//     const departureDate = new Date();
-//     const time = Math.ceil((departureDate - entryDate) / (1000 * 60 * 60)); // Corregir el divisor a milisegundos
-//     const totalPay = time * 5000;
-//     res.json({ time, totalPay });
-//   } catch (error) {
-//     res.status(400).json({ message: error.message });
-//   }
-// }
-
 // POST --> Salida del parqueadero
 export async function exit(req, res) {
   try {
