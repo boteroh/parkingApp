@@ -89,17 +89,53 @@ export async function payment(req, res) {
   try {
     const cell = await Cells.findById(req.params.id);
     if (!cell || !cell.entry_date) {
-      return res.status(400).json({ message: "Departure date needed" });
+      return res.status(400).json({ message: "Entry date is missing" });
     }
-    const entryDate = new Date(cell.entry_date);
+
+    // Capturar la fecha de salida actual
     const departureDate = new Date();
-    const time = Math.ceil((departureDate - entryDate) / (1000 * 60 * 60)); // Corregir el divisor a milisegundos
+    cell.departure_date = departureDate;
+
+    const entryDate = new Date(cell.entry_date);
+
+    // Calcular el tiempo en horas redondeando hacia arriba
+    const time = Math.ceil((departureDate - entryDate) / (1000 * 60 * 60));
+
+    // Calcular el total a pagar
     const totalPay = time * 5000;
-    res.json({ time, totalPay });
+
+    // Guardar la fecha de salida en la base de datos
+    await cell.save();
+
+    // Responder con la información requerida
+    res.json({
+      time,
+      totalPay,
+      entryDate: cell.entry_date,
+      departureDate: cell.departure_date
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 }
+
+
+// // GET --> Calcula el valor a pagar
+// export async function payment(req, res) {
+//   try {
+//     const cell = await Cells.findById(req.params.id);
+//     if (!cell || !cell.entry_date) {
+//       return res.status(400).json({ message: "Departure date needed" });
+//     }
+//     const entryDate = new Date(cell.entry_date);
+//     const departureDate = new Date();
+//     const time = Math.ceil((departureDate - entryDate) / (1000 * 60 * 60)); // Corregir el divisor a milisegundos
+//     const totalPay = time * 5000;
+//     res.json({ time, totalPay });
+//   } catch (error) {
+//     res.status(400).json({ message: error.message });
+//   }
+// }
 
 // POST --> Salida del parqueadero
 export async function exit(req, res) {
